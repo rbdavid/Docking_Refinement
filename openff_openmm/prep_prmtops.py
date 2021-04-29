@@ -23,7 +23,7 @@ ligand_system = force_field.create_openmm_system(ligand_topology)     # takes so
 ligand_pdbfile = PDBFile(pdb_file)
 
 # PARMED - couple topology, FF, and coordinates to create a parameterized molecule object
-ligand_structure = parmed.openmm.load_topology(ligand_topology,ligand_system,xyz=ligand_pdbfile.positions)
+ligand_structure = parmed.openmm.load_topology(ligand_pdbfile.topology,ligand_system,xyz=ligand_pdbfile.positions)
 
 # PARMED - save molecule files
 ligand_structure.save(out_string+'.pdb')
