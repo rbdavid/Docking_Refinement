@@ -10,13 +10,11 @@ import sys
 import glob
 
 ligand_smi_file = sys.argv[1]
-#ligand_sdf_file = sys.argv[1]  # same atom org as pdb
-ligand_pdb_files = glob(sys.argv[2])  # same atom org as sdf
+ligand_pdb_files = glob.glob(sys.argv[2])  # same atom org as sdf
 receptor_prmtop_file = sys.argv[3]  # parameterized in tleap
 receptor_inpcrd_file = sys.argv[4]  # parameterized in tleap
 
 ligand_pdb_files.sort()
-
 # OPENFF - load in the FF to be used
 force_field = ForceField('openff_unconstrained-1.0.0.offxml')
 
@@ -26,12 +24,14 @@ with open(ligand_smi_file,'r') as smi_file:
         if line[0] == '#':
             continue
         temp = line.split()
+        print(temp)
         # RDKIT - create sdf file for each ligand
         ligand = Chem.MolFromSmiles(temp[0])
         ligand = Chem.AddHs(ligand)
-        writer = SDWriter(temp[1]+'.sdf')
+        writer = Chem.SDWriter(temp[1]+'.sdf')
+        writer.write(ligand)
         # OPENFF/OPEN
-        lig_pdbs = [pdb for pdb in ligand_pdb_files if pdb.split('.pdb')[0] == temp[1]]   # grabs instances of docked structure to use as the cartesian coords 
+        lig_pdbs = [pdb for pdb in ligand_pdb_files if temp[1] in pdb]   # grabs instances of docked structure to use as the cartesian coords 
         if len(lig_pdbs) > 0:
             temp_pdb = lig_pdbs[0]
             # OPENFF - load in sdf_file of the ligand for topology
